@@ -1,15 +1,18 @@
 const express = require("express");
 const router = express.Router();
-
 const adminController = require("../controllers/adminController");
 
-// dashboard
+// Admin dashboard
 router.get("/dashboard", adminController.getDashboard);
 
-// get pending academies
-router.get("/pending-academies", adminController.getPendingAcademies);
+// Pending academies
+router.get("/academies/pending", adminController.getPendingAcademies);
 
-// update status (approve/reject)
-router.put("/academy-status/:id", adminController.updateAcademyStatus);
+// Academies by status
+router.get("/academies/status/:status", adminController.getAcademiesByStatus);
+
+// Approve / Reject academy
+router.put("/academies/:id/status", adminController.updateAcademyStatus);
+router.delete("/academies/:id", adminController.deleteAcademy);
 
 module.exports = router;

@@ -1,6 +1,5 @@
 const Academy = require("../models/academymodels");
 
-
 // =============================
 // 1️⃣ Admin Dashboard
 // =============================
@@ -10,7 +9,6 @@ exports.getDashboard = (req, res) => {
     message: "Admin dashboard working 🚀"
   });
 };
-
 
 // =============================
 // 2️⃣ Get Pending Academies
@@ -32,7 +30,9 @@ exports.getPendingAcademies = async (req, res) => {
   }
 };
 
-
+// =============================
+// 3️⃣ Get Academies by Status
+// =============================
 exports.getAcademiesByStatus = async (req, res) => {
   try {
     const { status } = req.params;
@@ -53,9 +53,8 @@ exports.getAcademiesByStatus = async (req, res) => {
   }
 };
 
-
 // =============================
-// 3️⃣ Approve / Reject Academy
+// 4️⃣ Approve / Reject Academy
 // =============================
 exports.updateAcademyStatus = async (req, res) => {
   try {
@@ -93,6 +92,32 @@ exports.updateAcademyStatus = async (req, res) => {
       success: true,
       message: `Academy ${status} successfully`,
       data: academy
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+// =============================
+// 5️⃣ DELETE ACADEMY
+// =============================
+exports.deleteAcademy = async (req, res) => {
+  try {
+    const academy = await Academy.findByIdAndDelete(req.params.id);
+
+    if (!academy) {
+      return res.status(404).json({
+        success: false,
+        message: "Academy not found"
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Academy deleted successfully"
     });
 
   } catch (error) {
