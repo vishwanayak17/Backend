@@ -1,23 +1,28 @@
 const mongoose = require("mongoose");
 
-const academySchema = new mongoose.Schema(
-  {
-    academyName: { type: String, required: true },
-    city: { 
-      type: String, 
-      required: true,
-      enum: ["Ahmedabad", "Gandhinagar"]   // ✅ enum applied
-    },
-    area: { type: String, required: true },
-    sports: { type: String, required: true },
-    phone: { type: String, required: true },
-    email: { type: String, required: true },
-    description: { type: String },
-    imageUrl: { type: String },
-    facilities: [{ type: String }],
-    status: { type: String, default: "pending" } // ✅ new field for approval
+const academySchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  password: String, // 🔥 ADD THIS
+
+  city: String,
+  area: String,
+  rating: Number,
+  status: String,
+  image: String,
+  description: String,
+  phone: String,
+  timing: String,
+  address: String,
+  sports: [String],
+  facilities: [String],
+  achievements: {
+    players: String,
+    students: String,
+    experience: String
   },
-  { timestamps: true }
-);
+  gallery: [String],
+  map: String
+});
 
 module.exports = mongoose.model("Academy", academySchema);

@@ -1,38 +1,28 @@
+// server.js me
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
+const mongoose = require("mongoose");
 
-const connectDB = require("./config/db");
-
-// Routes
 const authRoutes = require("./routes/authRoutes");
 const academyRoutes = require("./routes/academyRoutes");
-const adminRoutes = require("./routes/adminRoutes");
-const browserRoutes = require("./routes/browserRoutes");
 
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: "*" })); // ✅ ye allow karega frontend requests
 app.use(express.json());
 
-// DB Connect
-connectDB();
+// MongoDB connect
+mongoose.connect("mongodb://127.0.0.1:27017/sportsAcademy")
+  .then(() => console.log("MongoDB connected ✅"))
+  .catch(err => console.log(err));
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/academy", academyRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api", browserRoutes);   // public routes
+app.use("/api/academies", academyRoutes); // correct route
 
 // Test route
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
+app.get("/", (req, res) => res.send("API running"));
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log("MongoDB Connected");
-});
+const PORT = 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

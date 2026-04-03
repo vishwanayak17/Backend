@@ -1,4 +1,47 @@
 const Academy = require("../models/academymodels");
+const jwt = require("jsonwebtoken");
+
+// =============================
+// 🔐 0️⃣ ADMIN LOGIN
+// =============================
+exports.loginAdmin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // ⚠️ Hardcoded admin (submission ke liye best)
+    const admin = {
+      email: "admin@gmail.com",
+      password: "123456"
+    };
+
+    // Check credentials
+    if (email !== admin.email || password !== admin.password) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password"
+      });
+    }
+
+    // Generate token
+    const token = jwt.sign(
+      { role: "admin", email: admin.email },
+      "SECRET_KEY",
+      { expiresIn: "1d" }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Admin login successful",
+      token
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
 
 // =============================
 // 1️⃣ Admin Dashboard
@@ -60,7 +103,6 @@ exports.updateAcademyStatus = async (req, res) => {
   try {
     const { status } = req.body;
 
-    // validation
     if (!status) {
       return res.status(400).json({
         success: false,
@@ -101,6 +143,7 @@ exports.updateAcademyStatus = async (req, res) => {
     });
   }
 };
+
 // =============================
 // 5️⃣ DELETE ACADEMY
 // =============================

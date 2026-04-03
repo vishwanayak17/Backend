@@ -1,15 +1,13 @@
 const express = require("express");
 const router = express.Router();
 
+// ✅ IMPORT CONTROLLER
 const academyController = require("../controllers/academyController");
 
-// CREATE
+// ✅ ROUTES (DIRECT CALL - NO DESTRUCTURE CONFUSION)
 router.post("/register", academyController.createAcademy);
+router.post("/login", academyController.loginAcademy);
 
-// GET ALL
-router.get("/", academyController.getAllAcademies);
 
-// GET SINGLE
-router.get("/:id", academyController.getAcademyById);
 
 module.exports = router;

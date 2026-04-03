@@ -1,62 +1,98 @@
 const Academy = require("../models/academymodels");
+const bcrypt = require("bcryptjs");
 
-// CREATE ACADEMY (form submit)
+// ✅ REGISTER
 exports.createAcademy = async (req, res) => {
   try {
-    const academy = await Academy.create(req.body);
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields required",
+      });
+    }
+
+    const existing = await Academy.findOne({ email });
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: "Academy already exists",
+      });
+    }
+
+    // 🔥 HASH PASSWORD
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const academy = await Academy.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
 
     res.status(201).json({
       success: true,
-      message: "Academy Registered Successfully",
-      data: academy
+      message: "Academy Registered 🎉",
+      academy,
     });
+
   } catch (error) {
+    console.log("REGISTER ERROR:", error);
     res.status(500).json({
       success: false,
-      message: error.message
+      message: "Server Error",
     });
   }
 };
 
-
-// GET ALL ACADEMIES
-exports.getAllAcademies = async (req, res) => {
+// ✅ LOGIN (SAFE VERSION)
+exports.loginAcademy = async (req, res) => {
   try {
-    const academies = await Academy.find();
+    const { email, password } = req.body;
 
-    res.status(200).json({
-      success: true,
-      count: academies.length,
-      data: academies
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
-};
+    console.log("LOGIN TRY:", email, password);
 
-// GET SINGLE
-exports.getAcademyById = async (req, res) => {
-  try {
-    const academy = await Academy.findById(req.params.id);
+    const academy = await Academy.findOne({ email });
 
     if (!academy) {
-      return res.status(404).json({
+      return res.status(400).json({
         success: false,
-        message: "Academy not found"
+        message: "Academy not found",
+      });
+    }
+
+    console.log("DB PASSWORD:", academy.password);
+
+    // 🔥 FIX: ensure password exists
+    if (!academy.password) {
+      return res.status(500).json({
+        success: false,
+        message: "Password missing in DB",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, academy.password);
+
+    console.log("MATCH RESULT:", isMatch);
+
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid password",
       });
     }
 
     res.status(200).json({
       success: true,
-      data: academy
+      message: "Login successful 🎉",
+      academy,
     });
+
   } catch (error) {
+    console.log("LOGIN ERROR:", error);
     res.status(500).json({
       success: false,
-      message: error.message
+      message: "Server Error",
     });
   }
 };
