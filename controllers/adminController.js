@@ -1,20 +1,15 @@
 const Academy = require("../models/academymodels");
-const jwt = require("jsonwebtoken");
 
-// =============================
-// 🔐 0️⃣ ADMIN LOGIN
-// =============================
+// ✅ ADMIN LOGIN
 exports.loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // ⚠️ Hardcoded admin (submission ke liye best)
     const admin = {
       email: "admin@gmail.com",
       password: "123456"
     };
 
-    // Check credentials
     if (email !== admin.email || password !== admin.password) {
       return res.status(401).json({
         success: false,
@@ -22,30 +17,18 @@ exports.loginAdmin = async (req, res) => {
       });
     }
 
-    // Generate token
-    const token = jwt.sign(
-      { role: "admin", email: admin.email },
-      "SECRET_KEY",
-      { expiresIn: "1d" }
-    );
-
     res.status(200).json({
       success: true,
       message: "Admin login successful",
-      token
+      admin: { email: admin.email }
     });
 
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// =============================
-// 1️⃣ Admin Dashboard
-// =============================
+// ✅ GET DASHBOARD
 exports.getDashboard = (req, res) => {
   res.status(200).json({
     success: true,
@@ -53,64 +36,41 @@ exports.getDashboard = (req, res) => {
   });
 };
 
-// =============================
-// 2️⃣ Get Pending Academies
-// =============================
+// ✅ GET PENDING ACADEMIES
 exports.getPendingAcademies = async (req, res) => {
   try {
     const academies = await Academy.find({ status: "pending" });
-
     res.status(200).json({
       success: true,
       count: academies.length,
       data: academies
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// =============================
-// 3️⃣ Get Academies by Status
-// =============================
+// ✅ GET ACADEMIES BY STATUS
 exports.getAcademiesByStatus = async (req, res) => {
   try {
     const { status } = req.params;
-
     const academies = await Academy.find({ status });
-
     res.status(200).json({
       success: true,
       count: academies.length,
       data: academies
     });
-
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// =============================
-// 4️⃣ Approve / Reject Academy
-// =============================
+// ✅ APPROVE / REJECT ACADEMY
 exports.updateAcademyStatus = async (req, res) => {
   try {
     const { status } = req.body;
 
-    if (!status) {
-      return res.status(400).json({
-        success: false,
-        message: "Status is required (approved / rejected)"
-      });
-    }
-
-    if (!["approved", "rejected"].includes(status)) {
+    if (!status || !["approved", "rejected"].includes(status)) {
       return res.status(400).json({
         success: false,
         message: "Invalid status value"
@@ -137,16 +97,11 @@ exports.updateAcademyStatus = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// =============================
-// 5️⃣ DELETE ACADEMY
-// =============================
+// ✅ DELETE ACADEMY
 exports.deleteAcademy = async (req, res) => {
   try {
     const academy = await Academy.findByIdAndDelete(req.params.id);
@@ -164,9 +119,6 @@ exports.deleteAcademy = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };

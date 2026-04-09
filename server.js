@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 
 const authRoutes = require("./routes/authRoutes");
 const academyRoutes = require("./routes/academyRoutes");
+const adminRoutes = require("./routes/adminRoutes"); 
 
 const app = express();
 
@@ -19,7 +20,9 @@ mongoose.connect("mongodb://127.0.0.1:27017/sportsAcademy")
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/academies", academyRoutes); // correct route
+app.use("/api/academies", academyRoutes);
+app.use("/api/admin", adminRoutes); // correct route
+
 
 // Test route
 app.get("/", (req, res) => res.send("API running"));

@@ -4,7 +4,7 @@ const academySchema = new mongoose.Schema({
   name: String,
   email: String,
   password: String, // 🔥 ADD THIS
-
+   academyName: String, 
   city: String,
   area: String,
   rating: Number,
